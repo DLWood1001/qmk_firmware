@@ -3,7 +3,7 @@ ENCODER_ENABLE = no # Enables the use of one or more encoders
 RGBLIGHT_ENABLE = yes      # Enable keyboard RGB underglow
 
 LINK_TIME_OPTIMIZATION_ENABLE = yes
-CONSOLE_ENABLE = no
+CONSOLE_ENABLE = yes
 COMMAND_ENABLE = no
 MOUSEKEY_ENABLE = no
 WEBUSB_ENABLE = no

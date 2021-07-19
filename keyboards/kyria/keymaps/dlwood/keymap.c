@@ -2,6 +2,8 @@
 
 #include "version.h"
 #include <print.h>
+#include "rgblight.h"
+#include "stdlib.h"
 
 // Layers - General
 #define PRI_ 0
@@ -61,7 +63,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TAB,  KC_Q,              KC_W,   KC_E,     KC_R,    KC_T,
      KC_ESC,  KC_A,              KC_S,   KC_D,     KC_F,    KC_G,
      KC_LSFT, MT(MOD_LCTL,KC_Z), KC_X,   KC_C,     KC_V,    KC_B,     TT(RGB_), _______,
-                                         TT(FUN_), KC_LALT, TT(NUM_), KC_ENT,   KC_BS_DEL,
+                                         KC_LGUI,  KC_LALT, TT(NUM_), KC_ENT,   KC_BS_DEL,
 
   // Right Hand
   // _______    _______  _______   _______  _______  _______   _______              _______
@@ -162,7 +164,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                        SC_WLEFT, SC_WDOWN, SC_WUP,  SC_WRGHT, _______, _______,
                        KC_LEFT,  KC_DOWN,  KC_UP,   KC_RGHT,  _______, _______,
      _______, _______, KC_HOME,  KC_PGDN,  KC_PGUP, KC_END,   _______, _______,
-     _______, _______, _______, _______, _______
+     KC_LSFT, KC_LSFT, _______, _______, _______
   ),
 
   // Layer: System (SYS_)
@@ -283,10 +285,20 @@ static void render_qmk_logo(void) {
   oled_write_P(qmk_logo, false);
 }
 
+static void render_rgblight_status(void) {
+    oled_write_P(PSTR("RGB Mode: "), false);
+    uint32_t rgblight_mode = (uint32_t)(rgblight_get_mode());
+    char rgblight_mode_buffer[5];
+
+    itoa(rgblight_mode, rgblight_mode_buffer,10);
+    oled_write(rgblight_mode_buffer, false);
+    oled_write_P(PSTR("\n"), false);
+}
+
 static void render_status(void) {
     // QMK Logo and version information
     render_qmk_logo();
-    oled_write_P(PSTR("Kyria rev1.0\n\n"), false);
+    // oled_write_P(PSTR("Kyria rev1.0\n\n"), false);
 
     // Host Keyboard Layer Status
     oled_write_P(PSTR("Layer: "), false);
@@ -328,6 +340,9 @@ static void render_status(void) {
             oled_write_P(PSTR("Undefined\n"), false);
     }
 
+    // Show RGB Mode
+    render_rgblight_status();
+
     // Host Keyboard LED Status
     uint8_t led_usb_state = host_keyboard_leds();
     oled_write_P(IS_LED_ON(led_usb_state, USB_LED_NUM_LOCK) ? PSTR("NUMLCK ") : PSTR("       "), false);
@@ -368,10 +383,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case KC_RAISE:
       if (record->event.pressed) {
-        /* uprintf("Raise On.\n"); */
+        uprintf("Raise On.\n");
         layer_on(NUM_);
       } else {
-        /* uprintf("Raise Off.\n"); */
+        uprintf("Raise Off.\n");
         layer_off(NUM_);
       }
       update_tri_layer_d(NUM_, PAD_, FUN_);
@@ -379,10 +394,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case KC_LOWER:
       if (record->event.pressed) {
-        /* uprintf("Lower On.\n"); */
+        uprintf("Lower On.\n");
         layer_on(PAD_);
       } else {
-        /* uprintf("Lower Off.\n"); */
+        uprintf("Lower Off.\n");
         layer_off(PAD_);
       }
       update_tri_layer_d(NUM_, PAD_, FUN_);
@@ -390,10 +405,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case KC_ADJUST:
       if (record->event.pressed) {
-        /* uprintf("Adjust On.\n"); */
+        uprintf("Adjust On.\n");
         layer_on(FUN_);
       } else {
-        /* uprintf("Adjust Off.\n"); */
+        uprintf("Adjust Off.\n");
         layer_off(FUN_);
       }
       update_tri_layer_d(NUM_, PAD_, FUN_);
@@ -455,7 +470,7 @@ combo_t key_combos[COMBO_COUNT] = {
   [CMB_QW] = COMBO_ACTION(qw_combo),
 };
 
-void process_combo_event(uint8_t combo_index, bool pressed) {
+void process_combo_event(uint16_t combo_index, bool pressed) {
   oled_write_P(PSTR("\n\n"), false);
   switch(combo_index) {
     case CMB_DF:

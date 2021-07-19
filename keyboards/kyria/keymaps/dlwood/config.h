@@ -21,7 +21,12 @@
 #endif
 
 #ifdef RGBLIGHT_ENABLE
-  #define RGBLIGHT_ANIMATIONS
+  #undef RGBLIGHT_ANIMATIONS // Removes all Effects
+  #undef RGBLIGHT_STATIC_PATTERNS // Removes all Static Effects
+  #undef RGBLIGHT_EFFECT_STATIC_LIGHT // Removes Specific Static Effect
+
+  #define RGBLIGHT_EFFECT_RAINBOW_MOOD // Specific Animation
+  //#define RGBLIGHT_MODE_RAINBOW_MOOD // Not sure, thought I could choose which animation with this define.
   #define RGBLIGHT_HUE_STEP 8
   #define RGBLIGHT_SAT_STEP 8
   #define RGBLIGHT_VAL_STEP 8
