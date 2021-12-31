@@ -286,13 +286,18 @@ static void render_qmk_logo(void) {
 }
 
 static void render_rgblight_status(void) {
+
+#ifdef RGBLIGHT_ENABLE
     oled_write_P(PSTR("RGB Mode: "), false);
+
     uint32_t rgblight_mode = (uint32_t)(rgblight_get_mode());
     char rgblight_mode_buffer[5];
 
     itoa(rgblight_mode, rgblight_mode_buffer,10);
     oled_write(rgblight_mode_buffer, false);
     oled_write_P(PSTR("\n"), false);
+#endif
+
 }
 
 static void render_status(void) {
